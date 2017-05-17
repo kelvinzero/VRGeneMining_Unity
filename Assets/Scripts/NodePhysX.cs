@@ -1,5 +1,6 @@
 ﻿using UnityEngine;
 using System.Collections;
+using System.Collections.Generic;
 
 public class NodePhysX : Node {
 
@@ -7,6 +8,33 @@ public class NodePhysX : Node {
 
     private float sphRadius;
     private float sphRadiusSqr;
+    private float min = -1.5f;
+    private float max = 1.5f;
+
+    Color lowColor = Color.red;
+    Color midColor = Color.white;
+    Color highColor = Color.blue;
+
+    List<double[]> recordValues;
+    List<string> attributeNames;
+    List<string> associations;
+
+
+    public List<double[]> RecordValues
+    {
+        get { return recordValues; }
+        set { recordValues = value; }
+    }
+    public List<string> AttributeNames
+    {
+        get { return attributeNames; }
+        set { attributeNames = value; }
+    }
+    public List<string> Associations
+    {
+        get { return associations; }
+        set { associations = value; }
+    }
 
     protected override void doGravity()
     {

@@ -1419,7 +1419,7 @@ namespace BulletUnity
                 mesh.RecalculateBounds();
 
             if (optimize)
-                mesh.Optimize();
+                ;
 
         }
     }

@@ -155,10 +155,5 @@ public class GameCtrlUI : MonoBehaviour {
         gameControl = GetComponent<GameController>();
         gameCtrlInputReader = GetComponent<GameCtrlInputReader>();
         graphControl = GetComponent<GraphController>();
-
-        progressBar = FindObjectOfType<ProgressBarBehaviour>();
-        progressBarObj = progressBar.gameObject;
-        panelrecttrans = GameObject.Find("PanelLeft").GetComponent<RectTransform>();
-        progressBarObj.SetActive(false);
     }
 }

@@ -1,21 +1,25 @@
-﻿using UnityEngine;
+﻿using Assets.Scripts;
+using Assets.Scripts.DataHandling;
+using System.Collections.Generic;
+using UnityEngine;
 
-[RequireComponent(typeof(GameCtrlUI))]
-[RequireComponent(typeof(GameCtrlHID))]
+
 [RequireComponent(typeof(GameCtrlHelper))]
-[RequireComponent(typeof(GameCtrlInputReader))]
 [RequireComponent(typeof(GraphController))]
 
 public class GameController : MonoBehaviour {
 
     [SerializeField]
-    private bool verbose = true;
+    private bool verbose = false;
+    GraphController graphController;
+    PersistantData persistentData;
+    private readonly string VALSPATH = "C:\\Users\\Josh\\AppData\\LocalLow\\DefaultCompany\\BioAnalizeVR\\galExpData.vals";
+    private readonly string ASSOCPATH = "C:\\Users\\Josh\\AppData\\LocalLow\\DefaultCompany\\BioAnalizeVR\\galFiltered.assoc";
+
 
     // use BulletUnity or PhysX?
     private bool engineBulletUnity = false;
     
-    private static GameCtrlHID gameCtrlHID;
-
     public bool EngineBulletUnity
     {
         get
@@ -30,11 +34,20 @@ public class GameController : MonoBehaviour {
 
     void Start()
     {
-        gameCtrlHID = GetComponent<GameCtrlHID>();
+        graphController = GetComponent<GraphController>();
+        
+        List<string[]> dataSet = FileHandler.LoadSet(VALSPATH, true);
+        List<DataTypes>[] types = FileHandler.InferTypes(VALSPATH, true);
+        List<string[]> associationSet = FileHandler.LoadSet(ASSOCPATH, false);
+        
+        
+        for (int i = 0; i < 10; i++)
+            graphController.GenerateNode();
+        for (int i = 0; i < 5; i++)
+            graphController.GenerateLink("random");
     }
 
     void Update()
     {
-        gameCtrlHID.PaintModeController();
     }
 }

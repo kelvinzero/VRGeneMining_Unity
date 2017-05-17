@@ -1,0 +1,32 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 2017
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BioAnalyzeVR.Plugins", "BioAnalyzeVR.Plugins.csproj", "{3F1A13E5-5AE3-EF0C-3233-DD7CE770B734}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BioAnalyzeVR", "BioAnalyzeVR.csproj", "{CD22992B-7301-16B1-1BD9-0D8BD78E3950}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BioAnalyzeVR.Editor", "BioAnalyzeVR.Editor.csproj", "{DF7B6D5B-63F1-A909-DBAB-8E1C691BFCA7}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{3F1A13E5-5AE3-EF0C-3233-DD7CE770B734}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{3F1A13E5-5AE3-EF0C-3233-DD7CE770B734}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{3F1A13E5-5AE3-EF0C-3233-DD7CE770B734}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{3F1A13E5-5AE3-EF0C-3233-DD7CE770B734}.Release|Any CPU.Build.0 = Release|Any CPU
+		{CD22992B-7301-16B1-1BD9-0D8BD78E3950}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{CD22992B-7301-16B1-1BD9-0D8BD78E3950}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{CD22992B-7301-16B1-1BD9-0D8BD78E3950}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{CD22992B-7301-16B1-1BD9-0D8BD78E3950}.Release|Any CPU.Build.0 = Release|Any CPU
+		{DF7B6D5B-63F1-A909-DBAB-8E1C691BFCA7}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{DF7B6D5B-63F1-A909-DBAB-8E1C691BFCA7}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{DF7B6D5B-63F1-A909-DBAB-8E1C691BFCA7}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{DF7B6D5B-63F1-A909-DBAB-8E1C691BFCA7}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+EndGlobal

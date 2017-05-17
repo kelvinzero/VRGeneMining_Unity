@@ -154,7 +154,6 @@ public class GameCtrlHID : MonoBehaviour {
     void Start()
     {
         graphControl = GetComponent<GraphController>();
-        gameCtrlUI = GetComponent<GameCtrlUI>();
         gameCtrlHelper = GetComponent<GameCtrlHelper>();
     }
 }

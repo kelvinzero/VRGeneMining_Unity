@@ -6,10 +6,9 @@ using System.Collections.Generic;
 public class GraphController : MonoBehaviour {
 
     [SerializeField]
-    private static bool verbose = true;
+    private static bool verbose = false;
 
     private static GameController gameControl;
-    private static GameCtrlUI gameCtrlUI;
     private static GameCtrlHelper gameCtrlHelper;
 
     [SerializeField]
@@ -24,11 +23,11 @@ public class GraphController : MonoBehaviour {
     [SerializeField]
     private GameObject nodePrefabBullet;
     [SerializeField]
-    private GameObject nodePrefabPhysX;
+    public GameObject nodePrefabPhysX;
     [SerializeField]
     private Link linkPrefab;
     [SerializeField]
-    private float nodeVectorGenRange = 7F;
+    public float nodeVectorGenRange = 7F;
 
     [SerializeField]
     private float globalGravityBullet = 0.1f;
@@ -45,7 +44,7 @@ public class GraphController : MonoBehaviour {
 
     private static int nodeCount;
     private static int linkCount;
-    private List<GameObject> debugObjects = new List<GameObject>();
+    public List<GameObject> debugObjects = new List<GameObject>();
 
     public bool AllStatic
     {
@@ -224,14 +223,12 @@ public class GraphController : MonoBehaviour {
         {
             Destroy(destroyTarget);
             LinkCount -= 1;
-            gameCtrlUI.PanelStatusLinkCountTxt.text = "Linkcount: " + LinkCount;
         }
 
         foreach (GameObject destroyTarget in GameObject.FindGameObjectsWithTag("node"))
         {
             Destroy(destroyTarget);
             NodeCount -= 1;
-            gameCtrlUI.PanelStatusNodeCountTxt.text = "Nodecount: " + NodeCount;
         }
 
         foreach (GameObject destroyTarget in GameObject.FindGameObjectsWithTag("debug"))
@@ -244,14 +241,7 @@ public class GraphController : MonoBehaviour {
 
     private GameObject InstObj(Vector3 createPos)
     {
-        if (gameControl.EngineBulletUnity)
-        {
-            return Instantiate(nodePrefabBullet, createPos, Quaternion.identity) as GameObject;
-        }
-        else
-        {
-            return Instantiate(nodePrefabPhysX, createPos, Quaternion.identity) as GameObject;
-        }
+        return Instantiate(nodePrefabPhysX, createPos, Quaternion.identity) as GameObject;        
     }
 
     public GameObject GenerateNode()
@@ -268,8 +258,7 @@ public class GraphController : MonoBehaviour {
         {
             nodeCreated.name = "node_" + nodeCount;
             nodeCount++;
-            gameCtrlUI.PanelStatusNodeCountTxt.text = "Nodecount: " + NodeCount;
-
+         
             GameObject debugObj = nodeCreated.transform.FindChild("debugRepulseObj").gameObject;
             debugObjects.Add(debugObj);
             debugObj.SetActive(false);
@@ -299,8 +288,7 @@ public class GraphController : MonoBehaviour {
         {
             nodeCreated.name = "node_" + nodeCount;
             nodeCount++;
-            gameCtrlUI.PanelStatusNodeCountTxt.text = "Nodecount: " + NodeCount;
-
+         
             GameObject debugObj = nodeCreated.transform.FindChild("debugRepulseObj").gameObject;
             debugObjects.Add(debugObj);
             debugObj.SetActive(false);
@@ -336,8 +324,7 @@ public class GraphController : MonoBehaviour {
             nodeNode.Type = type;
 
             nodeCount++;
-            gameCtrlUI.PanelStatusNodeCountTxt.text = "Nodecount: " + NodeCount;
-
+          
             GameObject debugObj = nodeCreated.transform.FindChild("debugRepulseObj").gameObject;
             debugObjects.Add(debugObj);
             debugObj.SetActive(false);
@@ -386,8 +373,7 @@ public class GraphController : MonoBehaviour {
                     linkObject.source = source;
                     linkObject.target = target;
                     linkCount++;
-                    gameCtrlUI.PanelStatusLinkCountTxt.text = "Linkcount: " + LinkCount;
-
+          
                     return true;
                 }
                 else
@@ -471,7 +457,6 @@ public class GraphController : MonoBehaviour {
     void Start()
     {
         gameControl = GetComponent<GameController>();
-        gameCtrlUI = GetComponent<GameCtrlUI>();
         gameCtrlHelper = GetComponent<GameCtrlHelper>();
 
         nodeCount = 0;
