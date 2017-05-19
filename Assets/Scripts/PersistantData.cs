@@ -14,6 +14,8 @@ namespace Assets.Scripts
         Dictionary<string, List<string>> _associationDict;
         List<string> _datasetNames;
         List<string> _associationNames;
+        string datasetFilename;
+        string associationsFilename;
 
         public List<string> DatasetNames
         {
@@ -46,6 +48,32 @@ namespace Assets.Scripts
             set
             {
                 _associationNames = value;
+            }
+        }
+
+        public string DatasetFilename
+        {
+            get
+            {
+                return datasetFilename;
+            }
+
+            set
+            {
+                datasetFilename = value;
+            }
+        }
+
+        public string AssociationsFilename
+        {
+            get
+            {
+                return associationsFilename;
+            }
+
+            set
+            {
+                associationsFilename = value;
             }
         }
 

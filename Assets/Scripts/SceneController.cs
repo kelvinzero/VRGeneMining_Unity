@@ -69,6 +69,7 @@ public class SceneController : MonoBehaviour
             Datapersistent.RecordValues = dataSet;
             Datapersistent.DatasetNames = names;
             Datapersistent.Types = FileHandler.InferTypes(Application.persistentDataPath + "/" + filename, hasNamesToggle.isOn);
+            Datapersistent.DatasetFilename = filename;
             FileOptionsPanel.SetActive(false);
             TypesSelectionSetup();
         }
@@ -82,6 +83,7 @@ public class SceneController : MonoBehaviour
             recordCount.color = Color.black;
             Datapersistent.AssociationNames = names;
             Datapersistent.Associations = FileHandler.LoadAssociations(Application.persistentDataPath + "/" + filename, hasNamesToggle.isOn);
+            Datapersistent.AssociationsFilename = filename;
             FileOptionsPanel.SetActive(false);
             MainMenu.SetActive(true);
         }   
