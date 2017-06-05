@@ -21,10 +21,10 @@ public class MouseLook : MonoBehaviour {
 	public RotationAxes axes = RotationAxes.MouseXAndY;
 	public float sensitivityX = 90F;
 	public float sensitivityY = 90F;
-	
+    public GameObject MainMenu;
 	public float minimumX = -360F;
 	public float maximumX = 360F;
-	
+
 	public float minimumY = -90F;
 	public float maximumY = 90F;
 	
@@ -35,6 +35,11 @@ public class MouseLook : MonoBehaviour {
 	
 	void Update ()
 	{
+       
+        if (Input.GetKeyDown(KeyCode.Escape)){
+            Debug.Log("escape pressed, menu active " + MainMenu.active);
+            MainMenu.SetActive(!MainMenu.active);
+        }
         if (Input.GetMouseButton(1))
         {
             if (axes == RotationAxes.MouseXAndY)

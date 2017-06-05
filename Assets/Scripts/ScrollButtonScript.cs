@@ -7,15 +7,12 @@ public class ScrollButtonScript : MonoBehaviour {
 
     public bool upArrow = true;
     public Scrollbar scrollbar;
-    bool buttonDown = false;
-    float timeDown;
-
+    public float scale = 0.3f;
+ 
     public void ArrowButtonClicked()
-    {  
-            // Debug.Log("Button down: " + name);
-            timeDown = Time.time;
-            buttonDown = true;
-            scrollbar.value += upArrow ? 0.3f : -0.3f;
+    {
+        scrollbar.value += upArrow ? scale : -scale;
     }
+
 
 }

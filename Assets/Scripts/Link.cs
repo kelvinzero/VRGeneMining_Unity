@@ -16,9 +16,11 @@ public class Link : MonoBehaviour
 
     private Component sourceRb;
     private Component targetRb;
-    private LineRenderer lineRenderer;
+    public LineRenderer lineRenderer;
     private float intendedLinkLengthSqr;
     private float distSqrNorm;
+    public Color lineColor = Color.white;
+    public float lineWidth = 0.2f;
 
 
     void doAttraction()
@@ -61,13 +63,12 @@ public class Link : MonoBehaviour
 
         //color link according to status
         Color c;
-        c = Color.gray;
-        c.a = 0.5f;
-
+        c = Color.white;
+        
         //draw line
         lineRenderer.material = new Material(Shader.Find("Self-Illumin/Diffuse"));
-        lineRenderer.material.SetColor("_Color", c);
-        lineRenderer.SetWidth(0.3f, 0.3f);
+        lineRenderer.material.SetColor("_Color", lineColor);
+        lineRenderer.SetWidth(lineWidth, lineWidth);
         lineRenderer.SetVertexCount(2);
         lineRenderer.SetPosition(0, source.transform.position);
         lineRenderer.SetPosition(1, target.transform.position);

@@ -10,7 +10,9 @@ public class MaxNodesTextScript : MonoBehaviour {
     public void ChangeCounter(int changeBy)
     {
         int lastNumber = int.Parse(thisText.text);
+        
         lastNumber += changeBy;
-        thisText.text = lastNumber.ToString();
+        if(lastNumber >= 0)
+            thisText.text = lastNumber.ToString();
     }
 }

@@ -32,7 +32,6 @@ namespace Assets.Scripts.DataHandling
                 _programData = value;
             }
         }
-
         public int MaxNodes
         {
             get
@@ -46,61 +45,14 @@ namespace Assets.Scripts.DataHandling
             }
         }
 
-        public void LoadAll(string dataPath, string assocPath, bool dataHasNames, bool assocHasNames)
-        {
-            LoadNames(dataPath, dataHasNames);
-            InferTypes(dataPath, dataHasNames);
-            LoadAssociations(assocPath, assocHasNames);
-            LoadDataSet(dataPath, dataHasNames);
-        }
-
         public void LoadNames(string filePath, bool hasNames)
         {
             _programData.DatasetNames = FileHandler.LoadNames(filePath, hasNames);
-        }
-        
+        }       
         public void InferTypes(string filePath, bool hasNames)
         {
             _programData.Types = FileHandler.InferTypes(filePath, hasNames);
-        }
-
-        public void LoadAssociations(string filePath, bool hasNames)
-        {
-
-            Dictionary<string, List<string>> newDict = new Dictionary<string, List<string>>();
-            List<string[]> associationSet = FileHandler.LoadSet(filePath, hasNames);
-            List<string> outList;
-
-            foreach(string[] record in associationSet)
-            {
-                // if the dict doesnt have a key for this record
-                if(!newDict.TryGetValue(record[0], out outList))
-                {
-                    List<string> newValueStore = new List<string>();
-                    newValueStore.Add(record[1]);
-                    newDict.Add(record[0], newValueStore);
-                }
-                // if dict has the key, check the values to see if duplicate
-                else
-                {
-                    if (!outList.Contains(record[1]))
-                        outList.Add(record[1]);
-                }
-                // reciprocal of above
-                if(!newDict.TryGetValue(record[1], out outList)){
-                    List<string> newValueStore = new List<string>();
-                    newValueStore.Add(record[0]);
-                    newDict.Add(record[1], newValueStore);
-                }
-                else
-                {
-                    if (!outList.Contains(record[0]))
-                        outList.Add(record[0]);
-                }
-            }
-            _programData.Associations = newDict;
-        }
-
+        } 
         public void LoadDataSet(string filePath, bool hasNames)
         {
             _programData.RecordValues = FileHandler.LoadSet(filePath, hasNames);
@@ -137,8 +89,6 @@ namespace Assets.Scripts.DataHandling
 
             if (nodeCreated != null)
             {
-                
-
                 GameObject debugObj = nodeCreated.transform.FindChild("debugRepulseObj").gameObject;
                 _graphController.debugObjects.Add(debugObj);
                 debugObj.SetActive(false);

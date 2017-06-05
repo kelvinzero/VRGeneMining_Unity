@@ -49,41 +49,47 @@ public class SceneController : MonoBehaviour
             GameObject.Find("HasNamesToggle").GetComponent<Toggle>().isOn = false;
     }
 
+    bool _lastFileWasData;
     public void LoadFileOptionsComplete()
     {
         Toggle hasNamesToggle = GameObject.Find("HasNamesToggle").GetComponent<Toggle>();
         Toggle isTestData = GameObject.Find("TestDataToggle").GetComponent<Toggle>();
         string filename = GameObject.Find("OptionsHeader").GetComponent<Text>().text;
+
+        _lastFileWasData = isTestData.isOn;
+
         // Debug.Log("toggles and filename found: " + filename);
-        List<string[]> dataSet = FileHandler.LoadSet(Application.persistentDataPath + "/" + filename, hasNamesToggle.isOn);
         List<string> names = FileHandler.LoadNames(Application.persistentDataPath + "/" + filename, hasNamesToggle.isOn);       
         
         if (isTestData.isOn)
         {
+            Datapersistent.RecordValues = FileHandler.LoadSet(Application.persistentDataPath + "/" + filename, hasNamesToggle.isOn);
+            Datapersistent.DatasetNames = names;
+            Datapersistent.Types = FileHandler.InferTypes(Application.persistentDataPath + "/" + filename, hasNamesToggle.isOn);
+            Datapersistent.DatasetFilename = filename;
+            Datapersistent.HasDatafile = true;
+            Datapersistent.MinMaxData = FileHandler.GetMinMax(Application.persistentDataPath + "/" + filename, Datapersistent.Types, hasNamesToggle.isOn);
             Text fileNameText = GameObject.Find("DataFileNameText").GetComponent<Text>();
             Text recordCount = GameObject.Find("DataRecordCount").GetComponent<Text>();
             fileNameText.text = "Data File: " + _lastFileName;
             fileNameText.color = Color.black;
-            recordCount.text = "Records: " + dataSet.Count;
-            recordCount.color = Color.black;
-            Datapersistent.RecordValues = dataSet;
-            Datapersistent.DatasetNames = names;
-            Datapersistent.Types = FileHandler.InferTypes(Application.persistentDataPath + "/" + filename, hasNamesToggle.isOn);
-            Datapersistent.DatasetFilename = filename;
+            recordCount.text = "Records: " + Datapersistent.RecordValues.Count;
+            recordCount.color = Color.black;        
             FileOptionsPanel.SetActive(false);
             TypesSelectionSetup();
         }
         else
         {
+            Datapersistent.Associations = FileHandler.LoadAssociations(Application.persistentDataPath + "/" + filename, hasNamesToggle.isOn);
+            Datapersistent.AssociationsFilename = filename;
             Text fileNameText = GameObject.Find("AssociationFileNameText").GetComponent<Text>();
             Text recordCount = GameObject.Find("AssociationRecordCount").GetComponent<Text>();
             fileNameText.text = "Association File: " + _lastFileName;
             fileNameText.color = Color.black;
-            recordCount.text = "Associations: " + dataSet.Count;
+            recordCount.text = "Associations: " + Datapersistent.Associations.Count;
             recordCount.color = Color.black;
             Datapersistent.AssociationNames = names;
-            Datapersistent.Associations = FileHandler.LoadAssociations(Application.persistentDataPath + "/" + filename, hasNamesToggle.isOn);
-            Datapersistent.AssociationsFilename = filename;
+            Datapersistent.HasAssociations = true;
             FileOptionsPanel.SetActive(false);
             MainMenu.SetActive(true);
         }   
@@ -103,6 +109,14 @@ public class SceneController : MonoBehaviour
     // when done button is pressed on types options menu
     public void TypesSelectionComplete()
     {
+        for(int i = 0; i < _typeBarsList.Count; i++)
+        {
+            TypeMenuObjects togglesHolder = _typeBarsList[i].GetComponent<TypeMenuObjects>();
+            if(togglesHolder.IDtoggle.isOn)
+                Datapersistent.Types[i].Add(DataTypes.ID);
+            if (togglesHolder.IgnoreToggle.isOn)
+                Datapersistent.Types[i].Add(DataTypes.IGNORE);
+        }
         TypesListPanel.SetActive(false);
         MainMenu.SetActive(true);
     }

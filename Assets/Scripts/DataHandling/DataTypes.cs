@@ -10,6 +10,11 @@ namespace Assets.Scripts.DataHandling
         NUMERIC,
         NONNUMERIC,
         ID,
-        IGNORE
+        IGNORE,
+        FILE_ASSOCIATION,
+        ADDED_ASSOCIATION,
+        FILE_DATA,
+        ADDED_DATA,
+        GENE
     }
 }

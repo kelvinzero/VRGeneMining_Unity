@@ -25,6 +25,8 @@ public class GraphController : MonoBehaviour {
     [SerializeField]
     public GameObject nodePrefabPhysX;
     [SerializeField]
+    public GameObject centroidPrefabPhysX;
+    [SerializeField]
     private Link linkPrefab;
     [SerializeField]
     public float nodeVectorGenRange = 7F;
@@ -244,6 +246,38 @@ public class GraphController : MonoBehaviour {
         return Instantiate(nodePrefabPhysX, createPos, Quaternion.identity) as GameObject;        
     }
 
+    public GameObject GenerateCentroid()
+    {
+        // Method for creating a Node on random coordinates, e.g. when spawning multiple new nodes
+
+        GameObject nodeCreated = null;
+
+        Vector3 createPos = new Vector3(UnityEngine.Random.Range(0, nodeVectorGenRange), UnityEngine.Random.Range(0, nodeVectorGenRange), UnityEngine.Random.Range(0, nodeVectorGenRange));
+
+        nodeCreated = Instantiate(centroidPrefabPhysX, createPos, Quaternion.identity) as GameObject;
+
+        if (nodeCreated != null)
+        {
+            nodeCreated.name = "node_" + nodeCount;
+            nodeCount++;
+
+            GameObject debugObj = nodeCreated.transform.FindChild("debugRepulseObj").gameObject;
+            debugObjects.Add(debugObj);
+            debugObj.SetActive(false);
+
+            if (verbose)
+                Debug.Log(this.GetType().Name + "." + System.Reflection.MethodBase.GetCurrentMethod().Name + ": Node created: " + nodeCreated.gameObject.name);
+
+        }
+        else
+        {
+            if (verbose)
+                Debug.Log(this.GetType().Name + "." + System.Reflection.MethodBase.GetCurrentMethod().Name + ": Something went wrong, did not get a Node Object returned.");
+        }
+
+        return nodeCreated.gameObject;
+    }
+
     public GameObject GenerateNode()
     {
         // Method for creating a Node on random coordinates, e.g. when spawning multiple new nodes
@@ -372,7 +406,7 @@ public class GraphController : MonoBehaviour {
                     linkObject.name = "link_" + linkCount;
                     linkObject.source = source;
                     linkObject.target = target;
-                    linkCount++;
+                    //linkCount++;
           
                     return true;
                 }
@@ -484,6 +518,7 @@ public class GraphController : MonoBehaviour {
             LinkForceStrength = 5f;
             LinkIntendedLinkLength = 3f;
         }
+      
     }
 
     void Update()
