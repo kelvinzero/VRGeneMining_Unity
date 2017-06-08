@@ -135,6 +135,8 @@
     <Compile Include="Assets\BulletUnity\Scripts\SoftBody\BSoftBodyRope.cs" />
     <Compile Include="Assets\BulletUnity\Scripts\SoftBody\BSoftBodyWMesh.cs" />
     <Compile Include="Assets\BulletUnity\Scripts\SoftBody\SBSettings.cs" />
+    <Compile Include="Assets\DataInfoAttributeHolderObject.cs" />
+    <Compile Include="Assets\DatapointInfoPanelScript.cs" />
     <Compile Include="Assets\OVR\Scripts\OVRBoundary.cs" />
     <Compile Include="Assets\OVR\Scripts\OVRCameraRig.cs" />
     <Compile Include="Assets\OVR\Scripts\OVRCommon.cs" />
@@ -205,6 +207,7 @@
     <Compile Include="Assets\Scripts\SimulateDatapointMenuHandler.cs" />
     <Compile Include="Assets\Scripts\TypeMenuObjects.cs" />
     <Compile Include="Assets\Scripts\paintedLink.cs" />
+    <Compile Include="Assets\ViewGazeController.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Assets\BulletUnity\InternalResources\LineRenderFix.shader" />
