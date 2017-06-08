@@ -32,6 +32,11 @@ public class NodeSettingsHandler  : MonoBehaviour
     public Camera           MainViewCamera;
     public Text             MaxDatapointsText;
     public Text             MaxAssociationsText;
+    public Text             RenderedPointsText;
+    public Text             GenesPointsText;
+    public Text             LinksCountText;
+    public Text             ClustersCountText;
+    public Text             ClusterSetCountText;
 
     public bool     RenderFileDataPoints        = false;
     public bool     RenderFileAssociationPints  = false;
@@ -174,9 +179,19 @@ public class NodeSettingsHandler  : MonoBehaviour
     // Checks for render and association updates
     private void Update()
     {
+        RenderedPointsText.text = DataPointsCoordinator.Count.ToString();
+        if(DataCluster.ClusteringOn && !ClusterDataToggle.isOn)
+            ClusterButtonPressed();
+        if (!DataCluster.ClusteringOn && ClusterDataToggle.isOn)
+            ClusterButtonPressed();
+
+            if (DataCluster.ClusteringOn && DataCluster.ClusterCount != int.Parse(ClusterSetCountText.text))
+            ClusterCountChanged(ClusterSetCountText);
+
         if (CheckForRenderDataUpdate)
         {
             UpdateRenderFileDataPoints();
+            
             //UpdateRenderAllDataPoints();
         }
     }
@@ -402,39 +417,44 @@ public class NodeSettingsHandler  : MonoBehaviour
         CheckForRenderDataUpdate = true;
     }
 
-    public void ClusterButtonPressed()
+    private void ClusterButtonPressed()
     {
         if (verbose)
             Debug.Log("ClusterButtonPressed");
 
         Text clusterCount   = GameObject.Find("ClusterCountText").GetComponent<Text>();
-        int totalRecords = DataPointsCoordinator.Count;
+        int totalRecords = DataPointsCoordinator.Count + AddedDataPointsCoordinator.Count;
 
         if (ClusterDataToggle.isOn)
         {
             int clusterCountInt = int.Parse(clusterCount.text);
             DataCluster.SetParams(clusterCountInt, totalRecords, Graphcontroller, Persistantdata.Types);
-            DataCluster.SetClusteringOn(ClusterDataToggle.isOn);
+            DataCluster.SetClusteringOn(true);
+            ClustersCountText.text = clusterCountInt.ToString();
         }
         else
         {
             if (verbose)
                 Debug.Log("Turning clustering off");
             DataCluster.SetClusteringOn(ClusterDataToggle.isOn);
+            ClustersCountText.text = "0";
         }       
-        if (verbose)
-            Debug.Log("Cluster init");
+        
     }
 
-    public void ClusterCountChanged(Text numberText)
+    private void ClusterCountChanged(Text numberText)
     {
         int newCount = int.Parse(numberText.text);
+        ClustersCountText.text = newCount.ToString();
         if (verbose)
             Debug.Log("Clsuter count changed to " + newCount );
-        if (newCount > DataCluster.Centroids.Count)
-            DataCluster.AddCentroid();
-        else
-            DataCluster.RemoveCentroid();
+        if (ClusterDataToggle.isOn)
+        {
+            if (newCount > DataCluster.Centroids.Count)
+                DataCluster.AddCentroid();
+            else
+                DataCluster.RemoveCentroid();
+        }
     }
 
     public void PGLinksToggleChanged(Toggle pgToggle)

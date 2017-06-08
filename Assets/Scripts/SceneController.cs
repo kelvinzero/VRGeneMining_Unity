@@ -12,6 +12,7 @@ public class SceneController : MonoBehaviour
     GameObject          FileOptionsPanel;
     GameObject          TypesListPanel;
     GameObject          MainMenu;
+    GameObject typeBar;
     PersistantData      Datapersistent;
     List<GameObject>    _typeBarsList;
     string              _lastFileName;
@@ -125,11 +126,17 @@ public class SceneController : MonoBehaviour
     public void TypesSelectionSetup() 
     {
         TypesListPanel.SetActive(true);
+        if(!typeBar)
+            typeBar  = GameObject.Find("TypeBar");
 
-        GameObject typeBar  = GameObject.Find("TypeBar");
         GameObject parent   = GameObject.Find("TypesHolderPanel");
         int         count   = 0;
-        
+
+        if (_typeBarsList != null)
+        {
+            foreach (GameObject go in _typeBarsList)
+                Destroy(go);
+        }
         _typeBarsList = new List<GameObject>();
 
         typeBar.SetActive(false);

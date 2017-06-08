@@ -2,6 +2,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class SimulateDatapointMenuHandler : MonoBehaviour {
 
@@ -10,6 +11,8 @@ public class SimulateDatapointMenuHandler : MonoBehaviour {
     public GameObject           AddedRecordItemHolder;
     public GameObject           AddedRecordItem;
     public NodeSettingsHandler  NodeHandler;
+    public Text                 GeneratedCountText;
+
     List<CreateAttributeItemController> createdRecordAttributes;
 
     private void Start()
@@ -43,7 +46,6 @@ public class SimulateDatapointMenuHandler : MonoBehaviour {
             NodeHandler.Persistantdata.DatasetNames, NodeHandler.Persistantdata.Types, NodeHandler.DataCluster, NodeHandler);
         NodeHandler.AddedDataPointsCoordinator.OriginType = DataTypes.ADDED_DATA;
         NodeHandler.AddedDataPointsCoordinator.Records.Add(newNode);
-
         if (NodeHandler.ClusteringOn) // if in cluster, inform cluster
             NodeHandler.DataCluster.PointsTotal++;
 
@@ -55,12 +57,14 @@ public class SimulateDatapointMenuHandler : MonoBehaviour {
         }
         RandomizeAllAttributeValues();
         AddSimulatedToList(newRecord, newNode);
+        GeneratedCountText.text = NodeHandler.AddedDataPointsCoordinator.Count.ToString();
     }
 
     public void DeleteSimulatedPoint(GeneratedDatapointsObjects deleteObjectInfo)
     {
         NodeHandler.AddedDataPointsCoordinator.DestroyDataPoint(deleteObjectInfo.MyRecordObject);
         Destroy(deleteObjectInfo.gameObject);
+        GeneratedCountText.text = NodeHandler.AddedDataPointsCoordinator.Count.ToString();
     }
 
     public void AddSimulatedToList(string[] record, GameObject newNode)

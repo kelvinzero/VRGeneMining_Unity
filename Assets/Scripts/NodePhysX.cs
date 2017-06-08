@@ -3,8 +3,12 @@ using System.Collections;
 using System.Collections.Generic;
 using Assets.Scripts.DataHandling;
 using System;
+using UnityEngine.UI;
 
 public class NodePhysX : Node {
+
+    public Text linkCount;
+    public Text geneCount;
 
     private readonly bool verbose = true;
 
@@ -27,7 +31,7 @@ public class NodePhysX : Node {
     
     double[][]  _minMaxAttributes;
     double      _colorgradient;
-    double      _lastUpdate = 0;
+    double      _last = 0;
 
     int  _expressionAttribute;
     int  _centroidIndex;
@@ -45,6 +49,7 @@ public class NodePhysX : Node {
     List<string>                         _attributeNames;
     string                               _id;
     string[]                             _recordValues;
+    int                                  _geneAssociatedRecords = 0;
 
     public Cluster DataCluster
     {
@@ -155,6 +160,19 @@ public class NodePhysX : Node {
         }
     }
 
+    public int GeneAssociatedRecords
+    {
+        get
+        {
+            return _geneAssociatedRecords;
+        }
+
+        set
+        {
+            _geneAssociatedRecords = value;
+        }
+    }
+
     public void DestroyCentroidLinks()
     {
         if (LinkToCentroid != null)
@@ -185,7 +203,7 @@ public class NodePhysX : Node {
         _associations       = nodehandler.Persistantdata.Associations;
         _nodeHandler        = nodehandler;
 
-        Debug.Log("Datatypes length " + _columnDataTypes.Length);
+        //Debug.Log("Datatypes length " + _columnDataTypes.Length);
         for(int i =0; i < _columnDataTypes.Length; i++)
         {
             Debug.Log(_columnDataTypes[i][0].ToString());
@@ -239,9 +257,13 @@ public class NodePhysX : Node {
     {
         base.Start();
         thisRigidbody = this.GetComponent<Rigidbody>();
-        
     }
+    private void Awake()
+    {
+        linkCount = GameObject.Find("LinksCountText").GetComponent<Text>();
+        geneCount = GameObject.Find("GenesCountText").GetComponent<Text>();
 
+    }
     void Update()
     {
         // updating variable here, as opposed to doing it in Start(), otherwise we won't see runtime updates of forceSphereRadius
@@ -253,7 +275,7 @@ public class NodePhysX : Node {
 
 
         // if this is a datapoint (not gene or centroid)
-        if (OriginType.Equals(DataTypes.FILE_DATA) || OriginType.Equals(DataTypes.ADDED_DATA))
+        if (OriginType.Equals(DataTypes.FILE_DATA) || OriginType.Equals(DataTypes.ADDED_DATA) && OriginType != DataTypes.GENE)
         {
             HandleDataPointOperations();
 
@@ -287,11 +309,19 @@ public class NodePhysX : Node {
         {
             Link gLink = geneLink.GetComponent<Link>();
             NodePhysX gLinkTargetGene = gLink.target.GetComponent<NodePhysX>();
-            if (gLinkTargetGene.LinksToGenes.Contains(geneLink))
-                gLinkTargetGene.LinksToGenes.Remove(geneLink);
-            if (gLinkTargetGene.LinksToGenes.Count == 0)
+           // Debug.Log("Destroying gene link " + ID);
+           // Debug.Log("Target gene count " + gLinkTargetGene.GeneAssociatedRecords.ToString());
+            gLinkTargetGene.GeneAssociatedRecords--;
+            if (gLinkTargetGene.GeneAssociatedRecords == 0)
+            {
+             //   Debug.Log("Destroying gene " + gLinkTargetGene.ID);
                 Destroy(gLinkTargetGene.gameObject);
+                _nodeHandler.GenePointsCoordinator.Records.Remove(gLinkTargetGene.gameObject);
+                geneCount.text = (int.Parse(geneCount.text) - 1).ToString();
+            }
+                
             Destroy(geneLink);
+            linkCount.text = (int.Parse(linkCount.text) - 1).ToString();
         }
         LinksToGenes = new List<GameObject>();
     }
@@ -307,16 +337,17 @@ public class NodePhysX : Node {
             {
                 bool foundAssociatedGene = false;
                 List<string> foundGeneIds = new List<string>();
-
                 // check all gene records to see if exists already
                 foreach(GameObject geneRecordObject in _nodeHandler.GenePointsCoordinator.Records)
                 {
                     NodePhysX genePoint = geneRecordObject.GetComponent<NodePhysX>();
+               //     Debug.Log("Existing gene id " + genePoint.ID);
+
                     // check if check gene is in this association's matches
-                    foreach(string[] match in matches)
+                    foreach (string[] match in matches)
                     {
                         // if current check gene is a match to association
-                        if(genePoint.ID.ToLower() == match[0].ToLower())
+                        if (genePoint.ID.ToLower() == match[0].ToLower())
                         {
                             foundGeneIds.Add(genePoint.ID.ToLower());
                             foundAssociatedGene = true;
@@ -338,22 +369,23 @@ public class NodePhysX : Node {
                                 linkScr.target = geneRecordObject;
                                 linkScr.lineColor = Color.green;
                                 LinksToGenes.Add(newLink);
-                                genePoint.LinksToGenes.Add(newLink);
+                                genePoint.GeneAssociatedRecords++;
+                                linkCount.text = (int.Parse(linkCount.text) + 1).ToString();
                                 break;
                             }
                         }
                     }
                 }
                 if (!foundAssociatedGene)
-                {
+                {   
+
                     foreach(string[] match in matches)
                     {
-                        if (!foundGeneIds.Contains(match[0]) && match[1] == "pd")
+                        if (!foundGeneIds.Contains(match[0].ToLower()) && match[1] == "pd")
                         {
                             GameObject newGeneObject = graphControl.GenerateNode();
                             NodePhysX newGeneScript = newGeneObject.GetComponent<NodePhysX>();
                             newGeneScript.OriginType = DataTypes.GENE;
-
                             GameObject newLink = Instantiate(LinkPrefab, new Vector3(0, 0, 0), Quaternion.identity);
                             Link linkScr = newLink.GetComponent<Link>();
 
@@ -362,11 +394,17 @@ public class NodePhysX : Node {
                             linkScr.lineColor = Color.green;
                             LinksToGenes.Add(newLink);
                             newGeneScript.LinksToGenes = new List<GameObject>();
-                            newGeneScript.LinksToGenes.Add(newLink);
+                            newGeneScript._originType = DataTypes.GENE;
                             newGeneScript._associations = _associations;
                             newGeneScript._nodeHandler = _nodeHandler;
                             newGeneScript.ID = match[0].ToLower();
                             newGeneScript.GeneFindAssociations();
+                            newGeneScript.GeneAssociatedRecords++;
+                            _nodeHandler.GenePointsCoordinator.Records.Add(newGeneObject);
+                           // Debug.Log("Count genepoints: " + _nodeHandler.GenePointsCoordinator.Count);
+                            linkCount.text = (int.Parse(linkCount.text) + 1).ToString();
+                            geneCount.text = (int.Parse(geneCount.text) + 1).ToString();
+                            //Debug.Log(ID + " creating new gene and link to " + match[0].ToLower());
                         }
                     }
                 }
@@ -376,7 +414,7 @@ public class NodePhysX : Node {
 
     public void GeneFindAssociations()
     {
-        Debug.Log("Finding gene to gene associations " + ID + " " + _associations.Count);
+     //   Debug.Log("Finding gene to record associations " + ID + " " + _associations.Count);
         if(ID != null && _associations != null)
         {
             // create new list (also prevents repeat search)
@@ -385,7 +423,7 @@ public class NodePhysX : Node {
             // if associations has a match for this record, search all other datapoints
             if(_associations.TryGetValue(ID.ToLower(), out matches))
             {
-                Debug.Log("Found match in associations");
+           //     Debug.Log("Found match in associations");
                 // check each record for a match
                 foreach(GameObject record in _nodeHandler.DataPointsCoordinator.Records)
                 {
@@ -393,15 +431,14 @@ public class NodePhysX : Node {
                     // check all found associations to this point for match to checked record
                     foreach(string[] match in matches)
                     {
-
                         // if current check record is a match to association
-                        if (match[0].ToLower() == dataPoint.ID.ToLower())
+                        if (match[1].ToLower() == "pd" && match[0].ToLower() == dataPoint.ID.ToLower())
                         {
-                            Debug.Log("Found gene to gene match " + match[0].ToLower() + " : " + dataPoint.ID.ToLower());
+                            Debug.Log("Found gene to record match " + match[0].ToLower() + " : " + dataPoint.ID.ToLower());
 
                              // make sure link doesn't alread exist
                             bool exists = false;
-                            foreach(GameObject linkToGene in LinksToGenes)
+                            foreach(GameObject linkToGene in dataPoint.LinksToGenes)
                             {
                                 Link assLink = linkToGene.GetComponent<Link>();
                                 if (assLink.source == gameObject && assLink.target == record)
@@ -415,11 +452,12 @@ public class NodePhysX : Node {
                             {
                                 GameObject newLink = Instantiate(LinkPrefab, new Vector3(0, 0, 0), Quaternion.identity);
                                 Link linkScr = newLink.GetComponent<Link>();
-                                linkScr.source = gameObject;
-                                linkScr.target = record;
+                                linkScr.source = record;
+                                linkScr.target = gameObject;
                                 linkScr.lineColor = Color.green;
-                                LinksToGenes.Add(newLink);
                                 dataPoint.LinksToGenes.Add(newLink);
+                                linkCount.text = (int.Parse(linkCount.text) + 1).ToString();
+                                GeneAssociatedRecords++;
                                 break;
                             }   
                         }
@@ -471,7 +509,9 @@ public class NodePhysX : Node {
                                 linkScr.target = record;
                                 linkScr.lineColor = Color.red;
                                 LinksToAssociations.Add(newLink);
-                                break;
+                                linkCount.text = (int.Parse(linkCount.text) + 1).ToString();
+                               
+
                                 bool targetHasLink = false;
 
                                 // check if target has this link already add if not
@@ -485,6 +525,7 @@ public class NodePhysX : Node {
                                 }
                                 if (!targetHasLink)
                                     dataPoint.LinksToAssociations.Add(newLink);
+                                break;
                             }   
                         }
                     }
@@ -496,32 +537,40 @@ public class NodePhysX : Node {
 
     void HandleDataPointOperations()
     {
+        double timecheck = Time.time - _lastTime;
+       
+
         if (_isCentroid)
             return;
-
         bool isClusteringOn = DataCluster.ClusteringOn;
         if (!isClusteringOn)
         {
             DestroyCentroidLinks();
         }
 
-        _focus = DataCluster.FocusAttribute;
-        // only change focus color on file data
-        if (OriginType == DataTypes.FILE_DATA && Time.time - _lastTime > 1 && _focus != -1)
-        {
-            AdjustColorToGradient();
-        }
+
+        
         if ((OriginType == DataTypes.FILE_DATA || OriginType == DataTypes.ADDED_DATA) && _DataCluster.ClusteringOn)
         {
+          //  Debug.Log("Clustering on " + DataCluster.ClusteringOn + " canmove " + DataCluster.CanDatapointMove() + " timecheck " + timecheck);
+
             //Debug.Log("Finding closest cluster");
-            if (Time.time - _lastUpdate > 2.5)
+            if (timecheck > 3.5)
             {
-                if (!_nodeHandler.ClusteringPaused)
+                _lastTime = Time.time;
+            //    Debug.Log("Canmove " + DataCluster.CanDatapointMove() + " Time " + (Time.time - _lastTime));
+                if (!_nodeHandler.ClusteringPaused && _DataCluster.CanDatapointMove())
                 {
+              //      Debug.Log("Clustering on " + DataCluster.ClusteringOn + " canmove " + DataCluster.CanDatapointMove());
                     FindClosestCluster();
-                    _lastUpdate = Time.time;
                 }
             }
+        }
+        _focus = DataCluster.FocusAttribute;
+        // only change focus color on file data
+        if (OriginType == DataTypes.FILE_DATA && timecheck > 2  && _focus != -1)
+        {
+            AdjustColorToGradient();
         }
     }
 
@@ -529,7 +578,6 @@ public class NodePhysX : Node {
     {
         //Debug.Log("updating color");  
         double focusValue = double.Parse(RecordValues[_focus]);
-        _lastTime = Time.time;
         // set the color of this datapoint based on attribute focus
         if (focusValue == 0)
         {
@@ -550,7 +598,7 @@ public class NodePhysX : Node {
     {
        // Debug.Log("Finding closest cluster size " + DataCluster.Centroids.Count);
         bool done = false;
-        if (MyCentroid == null)
+        if (MyCentroid == null && DataCluster.Centroids.Count > 0)
         {
             foreach (Centroid centroid in DataCluster.Centroids)
             {
@@ -582,6 +630,8 @@ public class NodePhysX : Node {
         if (!done)
         {
             //Debug.Log("Not yet done");
+            //Debug.Log("cluster count " + DataCluster.Centroids.Count);
+        
             Centroid closestCentroid = DataCluster.Centroids[0];
             double closestDist = double.MaxValue;
             foreach (Centroid centroid in DataCluster.Centroids)

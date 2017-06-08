@@ -10,7 +10,7 @@ namespace Assets.Scripts.DataHandling
 {
     public class Cluster
     {
-        private readonly bool verbose = false;
+        private readonly bool verbose = true;
         int     _pointsReported;
         int     _pointsTotal;
         int     _clusterCount;
@@ -28,7 +28,7 @@ namespace Assets.Scripts.DataHandling
         {
             _columnTypes        = columntypes;
             PointsTotal         = pointsCount;
-            _clusterCount       = k;
+            ClusterCount       = k;
             Centroids           = new List<Centroid>();
             _graphController    = graphcontroller;
             
@@ -85,11 +85,24 @@ namespace Assets.Scripts.DataHandling
             }
         }
 
+        public int ClusterCount
+        {
+            get
+            {
+                return _clusterCount;
+            }
+
+            set
+            {
+                _clusterCount = value;
+            }
+        }
+
         public void SetParams(int k, int pointsCount, GraphController graphcontroller, List<DataTypes>[] columntypes)
         {
             _columnTypes = columntypes;
             PointsTotal = pointsCount;
-            _clusterCount = k;
+            ClusterCount = k;
             Centroids = new List<Centroid>();
              _graphController = graphcontroller;
             if (verbose) Debug.Log("Setaparamsdone");
@@ -101,17 +114,17 @@ namespace Assets.Scripts.DataHandling
             if (verbose) Debug.Log("add centroid Cluster.Centroid created");
             Centroids.Add(new Centroid(newRoidObj, this, _columnTypes, Centroids));
             if (verbose) Debug.Log("add centroid Cluster.Centroid added to list");
-            _clusterCount++;
+            ClusterCount++;
         }
 
         public void RemoveCentroid()
         {
-            if (_clusterCount == 0)
+            if (ClusterCount == 0)
                 return;
             GameObject removeRoidObj = Centroids[Centroids.Count - 1].GetGameObject();
             Centroids.RemoveAt(Centroids.Count - 1);
             UnityEngine.Object.Destroy(removeRoidObj);
-            _clusterCount--;
+            ClusterCount--;
         }
 
         public void InitializeCentroids()
@@ -120,15 +133,16 @@ namespace Assets.Scripts.DataHandling
             Centroids        = new List<Centroid>();
             _pointsReported  = 0;
 
-            for (int i = 0; i < _clusterCount; i++)
+            for (int i = 0; i < ClusterCount; i++)
             {
                 if (verbose) Debug.Log("Cluster.Creating centroid");
                 GameObject newRoidObj = _graphController.GenerateCentroid();
                 if (verbose) Debug.Log("Cluster.Centroid created");
                 Centroids.Add(new Centroid(newRoidObj, this, _columnTypes, Centroids));
                 if (verbose) Debug.Log("Cluster.Centroid added to list");
+                if (verbose) Debug.Log("Cluster.Centroid " + i + " initialized");
             }
-            if (verbose) Debug.Log("Cluster.Centroid initialized");
+            
         }
 
         public bool CanDatapointMove()
@@ -143,20 +157,18 @@ namespace Assets.Scripts.DataHandling
                 pointsMoved++;
             _pointsReported++;
             // if all points reported
-            if(_pointsReported == _pointsTotal)
+            if(_pointsReported >= _pointsTotal)
             {
-                // pause recalculating
                 _allowPointRecalculate = false;
-                Debug.Log("Recalculating turning off allos recalc ");
+                // pause recalculating
+                Debug.Log("Recalculating ");
                 // centroids recalculate
                 foreach(Centroid centroid in Centroids)
                     centroid.RecalculateCentroid();
-
                 Debug.Log("centroids recalculated done");
+                _allowPointRecalculate = true;
                 _pointsReported = 0;
                 // unpause recalc
-                if(pointsMoved > 2)
-                    _allowPointRecalculate = true;
                 pointsMoved = 0;
             }
             //Debug.Log("Datapoint reported");
@@ -164,6 +176,7 @@ namespace Assets.Scripts.DataHandling
 
         public void SetClusteringOn(bool isOn)
         {
+
             ClusteringOn = isOn;
             Debug.Log("Turning clustering on" + ClusteringOn);
             if (isOn)
@@ -180,6 +193,7 @@ namespace Assets.Scripts.DataHandling
                 foreach(Centroid centroid in Centroids)               
                     UnityEngine.Object.Destroy(centroid.GetGameObject());
                 Debug.Log("Clustering off");
+                Centroids = new List<Centroid>();
             }
         }
         public double EuclideanDistanceToCentroid(double[] centroidVals, string[] record)
@@ -188,7 +202,7 @@ namespace Assets.Scripts.DataHandling
             for (int i = 0; i < centroidVals.Length; i++)
             {
                 if (verbose)
-                    Debug.Log(centroidVals[i] + " - " + record[i]);
+                    ;    // Debug.Log(centroidVals[i] + " - " + record[i]);
                 // accumulate distance if type is numeric and non ignore
                 if (_columnTypes[i].Contains(DataTypes.NUMERIC) && !_columnTypes[i].Contains(DataTypes.IGNORE))
                 {

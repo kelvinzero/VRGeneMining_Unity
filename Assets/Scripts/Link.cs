@@ -25,6 +25,8 @@ public class Link : MonoBehaviour
 
     void doAttraction()
     {
+        if (!sourceRb || !targetRb)
+            return;
         Vector3 forceDirection = sourceRb.transform.position - targetRb.transform.position;
         float distSqr = forceDirection.sqrMagnitude;
 
@@ -93,7 +95,8 @@ public class Link : MonoBehaviour
     {
         // moved from Start() in Update(), otherwise it won't see runtime updates of intendedLinkLength
         intendedLinkLengthSqr = intendedLinkLength * intendedLinkLength;
-
+        if (!sourceRb || !targetRb)
+            return;
         lineRenderer.SetPosition(0, source.transform.position);
         lineRenderer.SetPosition(1, target.transform.position);
     }
