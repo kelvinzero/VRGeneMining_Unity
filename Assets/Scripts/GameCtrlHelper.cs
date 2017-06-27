@@ -1,5 +1,4 @@
 ﻿using UnityEngine;
-using BulletUnity;
 using BulletSharp;
 
 public class GameCtrlHelper : MonoBehaviour {
@@ -8,27 +7,12 @@ public class GameCtrlHelper : MonoBehaviour {
     private bool verbose = true;
 
     [SerializeField]
-    private BPhysicsWorld bPhysicsWorld;
-
+    
     GameController gameControl;
     GraphController graphControl;
 
     private GameObject hitGo;
 
-    public GameObject ScreenPointToRaySingleHitBullet(Camera cam, Vector3 pointerCoords)
-    {
-        CollisionObject hitCo = BCamera.ScreenPointToRay(cam, pointerCoords, CollisionFilterGroups.SensorTrigger, CollisionFilterGroups.DefaultFilter);
-
-        if (hitCo != null && hitCo.UserObject is BCollisionObject)
-        {
-            BCollisionObject hitBCo = (BCollisionObject)hitCo.UserObject as BCollisionObject;
-            return hitBCo.gameObject;
-        }
-        else
-        {
-            return null;
-        }
-    }
 
     public GameObject ScreenPointToRaySingleHitNative(Camera cam, Vector3 pointerCoords)
     {
@@ -52,13 +36,9 @@ public class GameCtrlHelper : MonoBehaviour {
 
     public GameObject ScreenPointToRaySingleHitWrapper(Camera cam, Vector3 pointerCoords)
     {
-        if (gameControl.EngineBulletUnity)
-        {
-            hitGo = ScreenPointToRaySingleHitBullet(cam, pointerCoords);
-        } else
-        {
+        
             hitGo = ScreenPointToRaySingleHitNative(cam, pointerCoords);
-        }
+        
 
         if (hitGo != null)
             return hitGo;
@@ -70,14 +50,9 @@ public class GameCtrlHelper : MonoBehaviour {
     {
         float sphereDiam;
 
-        if (gameControl.EngineBulletUnity)
-        {
-            sphereDiam = GameObject.FindGameObjectWithTag("repulse").GetComponent<GhostObjPiggyBack2>().SphRadius * 2;
-        }
-        else
-        {
+        
             sphereDiam = graphControl.NodePhysXForceSphereRadius * 2;
-        }
+        
 
         return sphereDiam;
     }
@@ -87,10 +62,5 @@ public class GameCtrlHelper : MonoBehaviour {
     {
         gameControl = GetComponent<GameController>();
         graphControl = GetComponent<GraphController>();
-
-        if (gameControl.EngineBulletUnity)
-        {
-            Instantiate(bPhysicsWorld);
-        }
     }
 }

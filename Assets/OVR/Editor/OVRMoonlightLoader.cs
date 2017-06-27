@@ -31,8 +31,12 @@ class OVRMoonlightLoader
     static OVRMoonlightLoader()
 	{
 		EnforceInputManagerBindings();
+#if UNITY_ANDROID
+		EditorApplication.delayCall += EnforceOSIG;
+#endif
 		EditorApplication.update += EnforceBundleId;
 		EditorApplication.update += EnforceVRSupport;
+		EditorApplication.update += EnforceInstallLocation;
 
 		if (EditorUserBuildSettings.activeBuildTarget != BuildTarget.Android)
 			return;
@@ -108,6 +112,11 @@ class OVRMoonlightLoader
 #endif
 	}
 
+	private static void EnforceInstallLocation()
+	{
+		PlayerSettings.Android.preferredInstallLocation = AndroidPreferredInstallLocation.Auto;
+	}
+
 	private static void EnforceInputManagerBindings()
 	{
 		try
@@ -125,6 +134,31 @@ class OVRMoonlightLoader
 		{
 			Debug.LogError("Failed to apply Oculus GearVR input manager bindings.");
 		}
+	}
+
+	private static void EnforceOSIG()
+	{
+		// Don't bug the user in play mode.
+		if (Application.isPlaying)
+			return;
+		
+		// Don't warn if the project may be set up for submission or global signing.
+		if (File.Exists("Assets/Plugins/Android/AndroidManifest.xml"))
+			return;
+		
+		var files = Directory.GetFiles("Assets/Plugins/Android/assets");
+		bool foundPossibleOsig = false;
+		for (int i = 0; i < files.Length; ++i)
+		{
+			if (!files[i].Contains(".txt"))
+			{
+				foundPossibleOsig = true;
+				break;
+			}
+		}
+
+		if (!foundPossibleOsig)
+			Debug.LogWarning("Missing Gear VR OSIG at Assets/Plugins/Android/assets. Please see https://dashboard.oculus.com/tools/osig-generator");
 	}
 
 	private class Axis

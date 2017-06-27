@@ -1131,6 +1131,27 @@ public static class OVRInput
 		}
 	}
 
+	/// <summary>
+	/// Triggers a recenter to realign the specified controller's virtual pose with the user's real-world pose.
+	/// Only applicable to controllers that require recentering, such as the GearVR Controller.
+	/// Ignored for controllers that do not require recentering.
+	/// </summary>
+	public static void RecenterController(Controller controllerMask = Controller.Active)
+	{
+		if ((controllerMask & Controller.Active) != 0)
+			controllerMask |= activeControllerType;
+
+		for (int i = 0; i < controllers.Count; i++)
+		{
+			OVRControllerBase controller = controllers[i];
+
+			if (ShouldResolveController(controller.controllerType, controllerMask))
+			{
+				controller.RecenterController();
+			}
+		}
+	}
+
 	private static Vector2 CalculateAbsMax(Vector2 a, Vector2 b)
 	{
 		float absA = a.sqrMagnitude;
@@ -1506,6 +1527,11 @@ public static class OVRInput
 		public virtual void SetControllerVibration(float frequency, float amplitude)
 		{
 			OVRPlugin.SetControllerVibration((uint)controllerType, frequency, amplitude);
+		}
+
+		public virtual void RecenterController()
+		{
+			OVRPlugin.RecenterTrackingOrigin(OVRPlugin.RecenterFlags.Controllers);
 		}
 
 		public abstract void ConfigureButtonMap();

@@ -2,8 +2,6 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using BulletSharp;
-using UnityEditor.IMGUI.Controls;
 using UnityEngine;
 
 namespace Assets.Scripts.DataHandling

@@ -1,5 +1,6 @@
 ﻿using UnityEngine;
 using System.Collections;
+using UnityEngine.VR;
 
 public class MouseLook : MonoBehaviour {
 	
@@ -21,13 +22,20 @@ public class MouseLook : MonoBehaviour {
 	
 	void Update ()
 	{
-       
-        if (Input.GetKeyDown(KeyCode.Escape)){
-            Debug.Log("escape pressed, menu active " + MainMenu.active);
-            MainMenu.SetActive(!MainMenu.active);
-            MainMenu.transform.position = GetComponent<Camera>().transform.forward;
+        if (Input.GetKeyDown(KeyCode.Escape))
+        {
+            if (MainMenu)
+            {
+               // Debug.Log("escape pressed, menu active " + MainMenu.active);
+                MainMenu.SetActive(!MainMenu.active);
+                MainMenu.transform.position = this.transform.position - this.transform.forward * 2;
+                MainMenu.transform.LookAt(transform);
+                MainMenu.transform.position = this.transform.position + this.transform.forward * 2;
+
+            }
         }
-        
+        if (!VRSettings.isDeviceActive)
+        {
             if (axes == RotationAxes.MouseXAndY)
             {
                 // Read the mouse input axis
@@ -58,7 +66,7 @@ public class MouseLook : MonoBehaviour {
                 Quaternion yQuaternion = Quaternion.AngleAxis(-rotationY, Vector3.right);
                 transform.localRotation = originalRotation * yQuaternion;
             }
-        
+        }
 	}
 	
 	void Start ()

@@ -132,18 +132,6 @@ public class GameCtrlInputReader : MonoBehaviour {
         gameCtrlUI.PanelStatusText.text = "Graph done.";
     }
 
-    public void LoadandGenWorld()
-    {
-        nodesList.Clear();
-        linksList.Clear();
-
-        string sourceFile = gameCtrlUI.OpenFileDialogGetFile();
-        if (sourceFile.Length != 0)
-        {
-            StartCoroutine(LoadInputFile(sourceFile));
-        }
-    }
-
     void Start()
     {
         graphControl = GetComponent<GraphController>();

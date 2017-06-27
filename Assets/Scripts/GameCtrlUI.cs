@@ -1,6 +1,5 @@
 ﻿using UnityEngine;
 using UnityEngine.UI;
-using UnityEditor;
 using ProgressBar;
 
 public class GameCtrlUI : MonoBehaviour {
@@ -143,11 +142,6 @@ public class GameCtrlUI : MonoBehaviour {
         progressBar.Value = progressValue;
     }
 
-    internal string OpenFileDialogGetFile()
-    {
-        string file = EditorUtility.OpenFilePanel("Open Input File", Application.dataPath + "/Data", "");
-        return file;
-    }
 
     // Use this for initialization
     void Start()

@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.IO;
 using UnityEngine;
 using UnityEngine.UI;
+using UnityEngine.VR;
 
 public class SceneController : MonoBehaviour
 {
@@ -12,7 +13,9 @@ public class SceneController : MonoBehaviour
     GameObject          FileOptionsPanel;
     GameObject          TypesListPanel;
     GameObject          MainMenu;
-    GameObject typeBar;
+    GameObject          typeBar;
+    GameObject          FileExplorerCanvas;
+    public  Camera ovrcam;
     PersistantData      Datapersistent;
     List<GameObject>    _typeBarsList;
     string              _lastFileName;
@@ -33,6 +36,7 @@ public class SceneController : MonoBehaviour
         Datapersistent      = GameObject.Find("PersistentData").GetComponent<PersistantData>();
         TypesListPanel      = GameObject.Find("TypesListPanel");
         MainMenu            = GameObject.Find("MainMenuPanel");
+        FileExplorerCanvas  = GameObject.Find("FileExplorerCanvas");
     }
 
     public void FileSelected(Text fileText)
@@ -93,7 +97,7 @@ public class SceneController : MonoBehaviour
             Datapersistent.HasAssociations = true;
             FileOptionsPanel.SetActive(false);
             MainMenu.SetActive(true);
-        }   
+        }
     }
 
     public void LoadReloadFilePressed()
@@ -163,7 +167,7 @@ public class SceneController : MonoBehaviour
             count++;
         }
         _typeBarsList[0].GetComponentInChildren<Toggle>().isOn = true;
-    }
+     }
 
     public void AssociationDataClicked(Toggle clicker)
     {
@@ -172,6 +176,7 @@ public class SceneController : MonoBehaviour
             namesToggle.isOn = false;
         else
             namesToggle.isOn = true;
+        ovrcam.transform.LookAt(FileExplorerCanvas.transform);
     }
 
     public void PopulateFilesList()
