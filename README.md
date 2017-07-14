@@ -11,4 +11,5 @@ a microarray expression dataset. </p>
 <p>
 Dataset testing was performed on microarray testing data accessed from <a href="https://www.ncbi.nlm.nih.gov/gds"> NCBI GEO Datasets </a> </br>
 Association data is retrieved using the RESTful Association Grabber GUI and accessed through <a href="https://wiki.thebiogrid.org/doku.php/biogridrest">BioGRID REST Service</a></br>
+Force directed layout operations derived from <a href="https://github.com/Bamfax/ForceDirectedNodeGraph3DUnity">ForceDirectedNodeGraph3DUnity </a> on GitHub.</br>
 </p>
