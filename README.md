@@ -8,16 +8,15 @@ The VR Gene Mining program can form association links between datapoints loaded 
 loading an association list file corrisponding to records in the data file.</br>
 The RESTful Association Grabber GUI can be used to build full association lists given </br>
 a microarray expression dataset. </p>
-<p>
-Dataset testing was performed on microarray testing data accessed from <a href="https://www.ncbi.nlm.nih.gov/gds"> NCBI GEO Datasets </a> </br>
-Association data is retrieved using the RESTful Association Grabber GUI and accessed through <a href="https://wiki.thebiogrid.org/doku.php/biogridrest">BioGRID REST Service</a></br>
-Force directed layout operations derived from <a href="https://github.com/Bamfax/ForceDirectedNodeGraph3DUnity">ForceDirectedNodeGraph3DUnity </a> on GitHub.</br>
-</p>
-<p>
 </br></br>
 <p>
 <img src="https://github.com/kelvinzero/VRGeneMining/blob/master/Images/clusters2.PNG">
 </p>
 <p>
 <img src="https://github.com/kelvinzero/VRGeneMining/blob/master/Images/associationonlydataclusters.PNG">
+</p>
+<p>
+Dataset testing was performed on microarray testing data accessed from <a href="https://www.ncbi.nlm.nih.gov/gds"> NCBI GEO Datasets </a> </br>
+Association data is retrieved using the RESTful Association Grabber GUI and accessed through <a href="https://wiki.thebiogrid.org/doku.php/biogridrest">BioGRID REST Service</a>.</br>
+Force directed layout operations derived from <a href="https://github.com/Bamfax/ForceDirectedNodeGraph3DUnity">ForceDirectedNodeGraph3DUnity </a> on GitHub.</br>
 </p>
